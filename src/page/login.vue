@@ -100,6 +100,7 @@ export default {
           if (res.data.status == "success") {
             this.$router.push({ name: "index" });
             this.$store.state.userName = this.userName;
+            sessionStorage.userName = this.userName;
             api
               .findShoppingCnt({
                 params: { tel: this.userName },

@@ -41,10 +41,12 @@
       </el-col>
       <el-col :span="4" class="center">
         <div class="cw-icon">
+          <!-- shoppingCarts -->
           <i class="el-icon-shopping-cart-full iconfont"></i>
-          <a target="_blank" href="#">我的购物车</a>
+
+          <router-link :to="{ name: 'shoppingCarts' }">我的购物车 </router-link>
           <span class="ci-count">
-            {{ $store.state.cnt }}
+            {{ cnt }}
           </span>
         </div>
       </el-col>
@@ -54,6 +56,7 @@
 
 <script>
 import api from "@/api/index.js";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -77,6 +80,7 @@ export default {
     isSearchList: function () {
       return this.isFocus && this.searchWord;
     },
+    ...mapState(["cnt"]),
   },
   methods: {
     focus() {
@@ -90,7 +94,7 @@ export default {
     },
     input() {
       let value = this.searchWord;
-      api.getSearchList().then((res) => {
+      api.getSearchList(value).then((res) => {
         this.searchList = res.data.data.list.filter((item, index) => {
           return item.indexOf(value) > -1;
         });

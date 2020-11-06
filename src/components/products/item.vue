@@ -88,13 +88,16 @@ export default {
     // console.log(this.$store.state.userName);
     // console.log(this.meta.type);
     // console.log(this.meta.dealItems[0].title);
+    const stype = this.meta.type;
+    const goods = this.meta.dealItems[0].title;
+
     if (this.$store.state.userName != undefined) {
       const tel = this.$store.state.userName;
       api
         .showShopping({
-          tel: tel,
-          stype: this.meta.type,
-          goods: this.meta.dealItems[0].title,
+          tel,
+          stype,
+          goods,
         })
         .then((res) => {
           if (res.data.count != "0") {
@@ -102,41 +105,80 @@ export default {
             this.state = "已下单";
           }
         });
+    } else {
+      const shoplist = sessionStorage.getItem("shoplist");
+      if (shoplist != null) {
+        const li = JSON.parse(shoplist);
+        this.$store.dispatch("setCnt", li.length);
+        li.forEach((ele, index) => {
+          if (ele.stype == stype && ele.goods == goods) {
+            this.status = "1";
+            this.state = "已下单";
+          }
+        });
+      }
     }
   },
   methods: {
     addGoods(meta, item) {
-      api
-        .addShopping({
-          shoplist: [
-            {
-              stype: meta.type,
-              goods: item.title,
-              price: item.price,
-              cnt: 1,
-              unit: item.priceType,
-              factory: meta.title,
-              tel: this.tel,
-            },
-          ],
-        })
-        .then((res) => {
-          if (res.data.status == "success") {
-            alert(res.data.data);
-            this.state = "已下单";
-            this.status = 1;
+      if (this.tel) {
+        api
+          .addShopping({
+            shoplist: [
+              {
+                stype: meta.type,
+                goods: item.title,
+                price: item.price,
+                cnt: 1,
+                unit: item.priceType,
+                factory: meta.title,
+                tel: this.tel,
+              },
+            ],
+          })
+          .then((res) => {
+            if (res.data.status == "success") {
+              alert(res.data.data);
+              this.state = "已下单";
+              this.status = 1;
 
-            api
-              .findShoppingCnt({
-                params: { tel: this.tel },
-              })
-              .then((data) => {
-                this.$store.state.cnt = data.data.count;
-              });
-          } else {
-            alert(res.data.msg);
-          }
-        });
+              api
+                .findShoppingCnt({
+                  params: { tel: this.tel },
+                })
+                .then((data) => {
+                  this.$store.state.cnt = data.data.count;
+                });
+            } else {
+              alert(res.data.msg);
+            }
+          });
+      } else {
+        const shoptemp = {
+          stype: meta.type,
+          goods: item.title,
+          price: item.price,
+          cnt: 1,
+          unit: item.priceType,
+          factory: meta.title,
+        };
+        const shoplist = sessionStorage.getItem("shoplist");
+        if (shoplist != null) {
+          const li = JSON.parse(shoplist);
+          li.push(shoptemp);
+          sessionStorage.setItem("shoplist", JSON.stringify(li));
+          this.$store.dispatch("setCnt", li.length);
+          this.state = "已下单";
+          this.status = 1;
+        } else {
+          const shoparr = [];
+          shoparr.push(shoptemp);
+          sessionStorage.setItem("shoplist", JSON.stringify(shoparr));
+          this.$store.dispatch("setCnt", shoparr.length);
+          this.state = "已下单";
+          this.status = 1;
+        }
+      }
     },
   },
 };

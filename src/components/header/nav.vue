@@ -1,9 +1,9 @@
 <template>
   <div class="m-nav">
     <ul class="nav">
-      <li class="list ">
+      <li class="list">
         <i class="el-icon-shopping-cart-full"></i>
-        <span>我的购物车</span>
+        <router-link :to="{ name: 'shoppingCarts' }">我的购物车 </router-link>
       </li>
       <li class="list">
         <router-link to="/">我的美团</router-link>

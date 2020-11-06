@@ -2,7 +2,7 @@ import axios from '@/axios.js'
 
 var api = {
   SearchHotWords (params) {
-    return axios.get('/api/interface/searchHotWords', params)
+    return axios.get('/api/searchHot/info', params)
   },
   getSearchList () {
     return axios.get('/api/interface/search')

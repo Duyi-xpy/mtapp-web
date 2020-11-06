@@ -4,7 +4,8 @@ Vue.use(Vuex)
 
 const state = {
   position: '内蒙古',
-  cnt: 0
+  cnt: 0,
+  userName: ''
 }
 
 const mutations = {
@@ -13,6 +14,9 @@ const mutations = {
   },
   setCnt (state, val) {
     state.cnt = val
+  },
+  setUserName (state, val) {
+    state.userName = val
   }
 }
 const actions = {
@@ -22,6 +26,9 @@ const actions = {
   },
   setCnt ({commit}, val) {
     commit('setCnt', val)
+  },
+  setUserName ({commit}, val) {
+    commit('setUserName', val)
   }
 }
 export default new Vuex.Store({

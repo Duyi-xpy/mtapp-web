@@ -8,6 +8,8 @@ import changeCity from '@/page/changeCity.vue'
 import productDetail from '@/page/productDetail.vue'
 import login from '@/page/login.vue'
 import register from '@/page/register.vue'
+import shoppingCarts from '@/page/shoppingCarts.vue'
+import pay from '@/page/pay.vue'
 
 Vue.use(Router)
 
@@ -39,6 +41,14 @@ export default new Router({
           path: '/changeCity',
           name: 'changeCity',
           component: changeCity
+        }, {
+          path: '/shoppingCarts',
+          name: 'shoppingCarts',
+          component: shoppingCarts
+        }, {
+          path: '/pay',
+          name: 'pay',
+          component: pay
         }
       ]
     }, {
