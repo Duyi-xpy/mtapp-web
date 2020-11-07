@@ -15,23 +15,21 @@
               <span>{{ props.row.goods }}</span>
             </el-form-item>
             <el-form-item label="所属店铺">
-              <span>{{ props.row.goods }}</span>
+              <span>{{ props.row.factory }}</span>
             </el-form-item>
-            <el-form-item label="商品 ID">
-              <span>{{ props.row.goods }}</span>
+            <el-form-item label="商品单价">
+              <span>{{ props.row.price }}</span>
             </el-form-item>
-            <el-form-item label="店铺 ID">
-              <span>{{ props.row.goods }}</span>
+            <el-form-item label="商品单位">
+              <span>{{ props.row.unit }}</span>
             </el-form-item>
-            <el-form-item label="商品分类">
-              <span>{{ props.row.goods }}</span>
+            <el-form-item label="商品数量">
+              <span>{{ props.row.cnt }}</span>
             </el-form-item>
-            <el-form-item label="店铺地址">
-              <span>{{ props.row.goods }}</span>
+            <el-form-item label="总价">
+              <span>{{ props.row.total }}</span>
             </el-form-item>
-            <el-form-item label="商品描述">
-              <span>{{ props.row.goods }}</span>
-            </el-form-item>
+            
           </el-form>
         </template>
       </el-table-column>
@@ -196,6 +194,13 @@ export default {
       const del = this.tableData.splice(index, 1);
       const userName = this.$store.state.userName;
       if (userName != null) {
+        api
+          .delShopping({
+            shoplist: del,
+          })
+          .then((data) => {
+            console.log(data.data);
+          });
       } else {
         sessionStorage.setItem("shoplist", JSON.stringify(this.tableData));
       }
@@ -233,29 +238,56 @@ export default {
       return sums;
     },
     open() {
-      this.$confirm(
-        "确认是否提交该订单信息，前往支付？",
-        "提单提交信息",
-        {
+      const userName = this.$store.state.userName;
+      if (userName == null) {
+        this.$confirm("游客状态下无法支付，前往登录？", "提示信息", {
+          distinguishCancelAndClose: true,
+          confirmButtonText: "登录",
+          cancelButtonText: "放弃",
+        })
+          .then(() => {
+            this.$message({
+              type: "info",
+              message: "提交成功，即将登录页面",
+            });
+
+            this.$router.push({ name: "login" });
+          })
+          .catch((action) => {
+            this.$message({
+              type: "info",
+              message: action === "cancel" ? "登录页面" : "停留在当前页面",
+            });
+          });
+      } else {
+        this.$confirm("确认是否提交该订单信息，前往支付？", "提单提交信息", {
           distinguishCancelAndClose: true,
           confirmButtonText: "确认支付",
           cancelButtonText: "放弃支付",
-        }
-      )
-        .then(() => {
-          this.$message({
-            type: "info",
-            message: "提交成功，即将前往支付页面",
-          });
-          this.$router.push({ name: "pay" });
         })
-        .catch((action) => {
-          this.$message({
-            type: "info",
-            message:
-              action === "cancel" ? "放弃支付并留在本页面" : "停留在当前页面",
+          .then(() => {
+            this.$message({
+              type: "info",
+              message: "支付成功",
+            });
+            api
+              .pay({
+                shoplist: this.tableData,
+                tel: this.$store.state.userName,
+              })
+              .then((data) => {
+                this.$store.state.cnt = 0;
+                this.$router.push({ name: "index" });
+              });
+          })
+          .catch((action) => {
+            this.$message({
+              type: "info",
+              message:
+                action === "cancel" ? "放弃支付并留在本页面" : "停留在当前页面",
+            });
           });
-        });
+      }
     },
   },
 };

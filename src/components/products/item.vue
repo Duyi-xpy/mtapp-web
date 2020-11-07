@@ -5,10 +5,9 @@
     </dt>
     <dd>
       <h3>
-        <router-link
-          :to="{ name: 'productDetail', params: { itemId: item } }"
-          >{{ meta.title }}</router-link
-        >
+        <router-link :to="{ name: 'productDetail' }">{{
+          meta.title
+        }}</router-link>
       </h3>
       <el-rate
         v-model="meta.score"
@@ -138,7 +137,10 @@ export default {
           })
           .then((res) => {
             if (res.data.status == "success") {
-              alert(res.data.data);
+              this.$message({
+                message: "下单成功",
+                type: "success",
+              });
               this.state = "已下单";
               this.status = 1;
 

@@ -101,6 +101,25 @@ export default {
             this.$router.push({ name: "index" });
             this.$store.state.userName = this.userName;
             sessionStorage.userName = this.userName;
+
+            const shoplist = sessionStorage.getItem("shoplist");
+            if (shoplist != null) {
+              const li = JSON.parse(shoplist);
+              li.map((ele) => {
+                ele.tel = this.userName;
+                return ele;
+              });
+
+              api
+                .addShopping({
+                  shoplist: li,
+                })
+                .then((data) => {
+                  console.log(data.data);
+                  sessionStorage.removeItem("shoplist");
+                });
+            }
+
             api
               .findShoppingCnt({
                 params: { tel: this.userName },

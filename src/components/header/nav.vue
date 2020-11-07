@@ -9,7 +9,7 @@
         <router-link to="/">我的美团</router-link>
         <dl>
           <dd>
-            <router-link to="/">我的顶单</router-link>
+            <router-link :to="{ name: 'myticket' }">我的订单</router-link>
           </dd>
           <dd>
             <router-link to="/">我的收藏</router-link>
